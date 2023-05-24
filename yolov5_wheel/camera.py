@@ -36,10 +36,8 @@ import time
 
 # 摄像头URL列表
 urls = [
-    "rtsp://admin:password1@camera1_ip/Streaming/Channels/2",  # 第一个摄像头的URL
-    "rtsp://admin:password2@camera2_ip/Streaming/Channels/2",  # 第二个摄像头的URL
-    "rtsp://admin:password3@camera3_ip/Streaming/Channels/2",  # 第三个摄像头的URL
-    "rtsp://admin:password4@camera4_ip/Streaming/Channels/2",  # 第四个摄像头的URL
+    "rtsp://admin:cp6_ca123@10.200.35.250/Streaming/Channels/2",  # 第一个摄像头的URL
+    "rtsp://admin:cp6_ca123@10.200.35.24/Streaming/Channels/2",  # 第二个摄像头的URL
 ]
 
 # 创建摄像头对象列表

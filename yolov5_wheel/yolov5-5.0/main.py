@@ -20,7 +20,7 @@ from utils.torch_utils import select_device, load_classifier, time_synchronized
 
 
 # 预测函数
-def detect(save_img=False, num_images=1):
+def detect(save_img=False, image_paths=None):
     source, weights, view_img, save_txt, imgsz = opt.source, opt.weights, opt.view_img, opt.save_txt, opt.img_size
     save_img = not opt.nosave and not source.endswith('.txt')  # 保存推理结果的图像
     webcam = source.isnumeric() or source.endswith('.txt') or source.lower().startswith(
@@ -28,9 +28,6 @@ def detect(save_img=False, num_images=1):
 
     # 自定义结果输出
     list_result = []  # 存储检测结果的列表
-    path_img = ''  # 图像路径
-    dict_original = {'count': 0, 'result': '', 'str': ''}  # 检测结果的原始字典
-    dict_result = dict_original.copy()  # 创建一个副本
 
     # 目录设置
     save_dir = Path(increment_path(Path(opt.project) / opt.name, exist_ok=opt.exist_ok))  # 递增运行目录
@@ -65,7 +62,6 @@ def detect(save_img=False, num_images=1):
 
     # 获取类别名称和颜色
     names = model.module.names if hasattr(model, 'module') else model.names
-    # colors = [[random.randint(0, 255) for _ in range(3)] for _ in names]
 
     # 运行推断
     if device.type != 'cpu':
@@ -107,13 +103,13 @@ def detect(save_img=False, num_images=1):
                 det[:, :4] = scale_coords(img.shape[2:], det[:, :4], im0.shape).round()
 
                 # 打印结果
-                dict_result = dict_original.copy()  # 创建一个副本
+                dict_result = {'count': 0, 'result': '', 'str': ''}  # 检测结果的字典
                 str_temp = ''
                 for c in det[:, -1].unique():
                     n = (det[:, -1] == c).sum()  # 每个类别的检测数量
                     s += f"{n} {names[int(c)]}{'s' * (n > 1)}, "  # 添加到字符串中
                     dict_result[names[int(c)]] = int(n)
-                    str_temp += f"{n} {names[int(c)]}{'str_temp' * (n > 1)}, "
+                    str_temp += f"{n} {names[int(c)]}{'s' * (n > 1)}, "
 
                 dict_result['count'] = len(det[:, -1].unique())
                 dict_result['result'] = str_temp
@@ -147,24 +143,22 @@ def detect(save_img=False, num_images=1):
 
             # 保存结果（带有检测结果的图像）
             if save_img:
-                for i in range(num_images):
-                    if dataset.mode == 'image':
-                        image_save_path = save_path.replace('.jpg', f'_{i+1}.jpg')
-                        cv2.imwrite(image_save_path, im0)
-                    else:  # 视频或流式数据
-                        if vid_path != save_path:  # 新视频
-                            vid_path = save_path
-                            if isinstance(vid_writer, cv2.VideoWriter):
-                                vid_writer.release()  # 释放之前的视频编写器
-                            if vid_cap:  # 视频
-                                fps = vid_cap.get(cv2.CAP_PROP_FPS)
-                                w = int(vid_cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-                                h = int(vid_cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-                            else:  # 流式数据
-                                fps, w, h = 30, im0.shape[1], im0.shape[0]
-                                save_path += '.mp4'
-                            vid_writer = cv2.VideoWriter(save_path, cv2.VideoWriter_fourcc(*'mp4v'), fps, (w, h))
-                        vid_writer.write(im0)
+                if dataset.mode == 'image':
+                    cv2.imwrite(save_path, im0)
+                else:  # 视频或流式数据
+                    if vid_path != save_path:  # 新视频
+                        vid_path = save_path
+                        if isinstance(vid_writer, cv2.VideoWriter):
+                            vid_writer.release()  # 释放之前的视频编写器
+                        if vid_cap:  # 视频
+                            fps = vid_cap.get(cv2.CAP_PROP_FPS)
+                            w = int(vid_cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+                            h = int(vid_cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+                        else:  # 流式数据
+                            fps, w, h = 30, im0.shape[1], im0.shape[0]
+                            save_path += '.mp4'
+                        vid_writer = cv2.VideoWriter(save_path, cv2.VideoWriter_fourcc(*'mp4v'), fps, (w, h))
+                    vid_writer.write(im0)
 
     if save_txt or save_img:
         s = f"\n{len(list(save_dir.glob('labels/*.txt')))} labels saved to {save_dir / 'labels'}" if save_txt else ''
@@ -172,56 +166,30 @@ def detect(save_img=False, num_images=1):
 
     print(f'Done. ({time.time() - t0:.3f}s)')
     print(list_result)
-    # print(list_result[0].get('bad_wheel'))
     return list_result  # 返回检测结果列表
 
 
-""" 原代码---曲洋
-# 相机调用
 def camera():
-    url = "rtsp://admin:cp6_ca123@10.200.35.250/Streaming/Channels/2"
-    cap = cv2.VideoCapture(url)
-    ret, frame = cap.read()
-    cv2.imwrite(r"..\images\pictures.jpg", frame)
-    print("save pictures.jpg successfully!")
-    print("-----------------------------")
-    detect()
-    cap.release()
-"""
-
-
-def camera(num_images=1):
-    # 摄像头URL列表
     urls = [
-        "rtsp://admin:password1@camera1_ip/Streaming/Channels/2",  # 第一个摄像头的URL
-        "rtsp://admin:password2@camera2_ip/Streaming/Channels/2",  # 第二个摄像头的URL
-        "rtsp://admin:password3@camera3_ip/Streaming/Channels/2",  # 第三个摄像头的URL
-        "rtsp://admin:password4@camera4_ip/Streaming/Channels/2",  # 第四个摄像头的URL
+        "rtsp://admin:cp6_ca123@10.200.35.250/Streaming/Channels/2",
+        "rtsp://admin:cp6_ca123@10.200.35.24/Streaming/Channels/2",
     ]
-    # 保存路径
-    save_path = r"..\images\pictures"
-    """
-    save_path = r"D:\my_images"
-    """
-    # 创建摄像头对象列表
-    caps = [cv2.VideoCapture(url) for url in urls]
-    # 循环读取摄像头图像并进行处理
-    # 逐个读取摄像头图像并保存
-    for i, cap in enumerate(caps):
+    save_dir = Path("images")
+    save_dir.mkdir(parents=True, exist_ok=True)
+
+    for i, url in enumerate(urls):
+        cap = cv2.VideoCapture(url)
         ret, frame = cap.read()
+        cap.release()
+
         if ret:
-            file_name = f"{save_path}_{i+1}.jpg"  # 构造文件名，例如：pictures_1.jpg, pictures_2.jpg, ...
-            cv2.imwrite(file_name, frame)
-            print(f"Saved image: {file_name}")
-            # 调用detect函数对照片进行检测
-            detect(num_images=num_images)
+            file_name = f"pictures_{i+1}.jpg"
+            save_path = save_dir / file_name
+            cv2.imwrite(str(save_path), frame)
+            print(f"Saved image: {save_path}")
+            detect(save_img=True, image_paths=[str(save_path)])
         else:
             print(f"Failed to read image from camera")
-        # 1秒的等待时间，即每秒处理一次摄像头图像
-        time.sleep(1)
-    # 释放摄像头对象
-    for cap in caps:
-        cap.release()
 
 
 # PLC通讯 弃用
