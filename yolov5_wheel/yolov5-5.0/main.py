@@ -20,7 +20,7 @@ from utils.torch_utils import select_device, load_classifier, time_synchronized
 
 
 # 预测函数
-def detect(save_img=False):
+def detect(save_img=False, num_images=1):
     source, weights, view_img, save_txt, imgsz = opt.source, opt.weights, opt.view_img, opt.save_txt, opt.img_size
     save_img = not opt.nosave and not source.endswith('.txt')  # 保存推理结果的图像
     webcam = source.isnumeric() or source.endswith('.txt') or source.lower().startswith(
@@ -147,22 +147,24 @@ def detect(save_img=False):
 
             # 保存结果（带有检测结果的图像）
             if save_img:
-                if dataset.mode == 'image':
-                    cv2.imwrite(save_path, im0)
-                else:  # 视频或流式数据
-                    if vid_path != save_path:  # 新视频
-                        vid_path = save_path
-                        if isinstance(vid_writer, cv2.VideoWriter):
-                            vid_writer.release()  # 释放之前的视频编写器
-                        if vid_cap:  # 视频
-                            fps = vid_cap.get(cv2.CAP_PROP_FPS)
-                            w = int(vid_cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-                            h = int(vid_cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-                        else:  # 流式数据
-                            fps, w, h = 30, im0.shape[1], im0.shape[0]
-                            save_path += '.mp4'
-                        vid_writer = cv2.VideoWriter(save_path, cv2.VideoWriter_fourcc(*'mp4v'), fps, (w, h))
-                    vid_writer.write(im0)
+                for i in range(num_images):
+                    if dataset.mode == 'image':
+                        image_save_path = save_path.replace('.jpg', f'_{i+1}.jpg')
+                        cv2.imwrite(image_save_path, im0)
+                    else:  # 视频或流式数据
+                        if vid_path != save_path:  # 新视频
+                            vid_path = save_path
+                            if isinstance(vid_writer, cv2.VideoWriter):
+                                vid_writer.release()  # 释放之前的视频编写器
+                            if vid_cap:  # 视频
+                                fps = vid_cap.get(cv2.CAP_PROP_FPS)
+                                w = int(vid_cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+                                h = int(vid_cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+                            else:  # 流式数据
+                                fps, w, h = 30, im0.shape[1], im0.shape[0]
+                                save_path += '.mp4'
+                            vid_writer = cv2.VideoWriter(save_path, cv2.VideoWriter_fourcc(*'mp4v'), fps, (w, h))
+                        vid_writer.write(im0)
 
     if save_txt or save_img:
         s = f"\n{len(list(save_dir.glob('labels/*.txt')))} labels saved to {save_dir / 'labels'}" if save_txt else ''
@@ -188,7 +190,7 @@ def camera():
 """
 
 
-def camera():
+def camera(num_images=1):
     # 摄像头URL列表
     urls = [
         "rtsp://admin:password1@camera1_ip/Streaming/Channels/2",  # 第一个摄像头的URL
@@ -212,7 +214,7 @@ def camera():
             cv2.imwrite(file_name, frame)
             print(f"Saved image: {file_name}")
             # 调用detect函数对照片进行检测
-            detect()
+            detect(num_images=num_images)
         else:
             print(f"Failed to read image from camera")
         # 1秒的等待时间，即每秒处理一次摄像头图像
@@ -220,11 +222,6 @@ def camera():
     # 释放摄像头对象
     for cap in caps:
         cap.release()
-
-
-
-
-
 
 
 # PLC通讯 弃用
@@ -273,7 +270,6 @@ class ConMysql:
 
 
 if __name__ == '__main__':
-
     parser = argparse.ArgumentParser()
     parser.add_argument('--weights', nargs='+', type=str, default='runs/train/exp21/weights/best.pt',
                         help='model.pt path(s)')
@@ -307,12 +303,9 @@ if __name__ == '__main__':
         if res == 0 or res == lastValue:
             pass
         else:
-            thread = threading.Thread(target=camera(), name='camera')
+            thread = threading.Thread(target=camera, name='camera')
             thread.start()
             print(res)
 
         lastValue = res
         time.sleep(2)
-
-
-
