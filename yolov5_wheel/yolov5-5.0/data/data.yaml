@@ -1,0 +1,9 @@
+#指定训练集图片存放的地址
+train: D:\\YOLOv5Detect\\hard_hat_datasets\\train\\images
+val: D:\\YOLOv5Detect\\hard_hat_datasets\\valid\\images
+
+# number of classes
+nc: 3
+
+# class names
+names: ['head', 'helmet', 'person']

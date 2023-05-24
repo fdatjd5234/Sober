@@ -1,0 +1,26 @@
+<annotation>
+	<folder>images</folder>
+	<filename>39.jpg</filename>
+	<path>/Users/quyang/PycharmProjects/yolov5_wheel/yolov5-5.0/VOCData/images/39.jpg</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>2736</width>
+		<height>3648</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>good_wheel</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>163</xmin>
+			<ymin>736</ymin>
+			<xmax>2555</xmax>
+			<ymax>3103</ymax>
+		</bndbox>
+	</object>
+</annotation>

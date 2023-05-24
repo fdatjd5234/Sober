@@ -1,0 +1,9 @@
+train: C:\Users\Win10\PycharmProjects\yolov5_wheel\yolov5-5.0\VOCData\dataSet_path\train.txt
+val: C:\Users\Win10\PycharmProjects\yolov5_wheel\yolov5-5.0\VOCData\dataSet_path/val.txt
+
+#number of classes
+nc: 2
+
+
+#class names
+names: ["good_wheel", "bad_wheel"]

@@ -1,0 +1,26 @@
+<annotation>
+	<folder>images</folder>
+	<filename>77.jpg</filename>
+	<path>/Users/quyang/PycharmProjects/yolov5_wheel/yolov5-5.0/VOCData/images/77.jpg</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>2736</width>
+		<height>3648</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>bad_wheel</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>938</xmin>
+			<ymin>1320</ymin>
+			<xmax>1788</xmax>
+			<ymax>2153</ymax>
+		</bndbox>
+	</object>
+</annotation>

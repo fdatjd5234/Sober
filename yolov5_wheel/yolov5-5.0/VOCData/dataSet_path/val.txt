@@ -1,0 +1,12 @@
+C:/Users/Win10/PycharmProjects/yolov5_wheel/yolov5-5.0/VOCData/images/105.jpg
+C:/Users/Win10/PycharmProjects/yolov5_wheel/yolov5-5.0/VOCData/images/108.jpg
+C:/Users/Win10/PycharmProjects/yolov5_wheel/yolov5-5.0/VOCData/images/22.jpg
+C:/Users/Win10/PycharmProjects/yolov5_wheel/yolov5-5.0/VOCData/images/34.jpg
+C:/Users/Win10/PycharmProjects/yolov5_wheel/yolov5-5.0/VOCData/images/37.jpg
+C:/Users/Win10/PycharmProjects/yolov5_wheel/yolov5-5.0/VOCData/images/40.jpg
+C:/Users/Win10/PycharmProjects/yolov5_wheel/yolov5-5.0/VOCData/images/43.jpg
+C:/Users/Win10/PycharmProjects/yolov5_wheel/yolov5-5.0/VOCData/images/56.jpg
+C:/Users/Win10/PycharmProjects/yolov5_wheel/yolov5-5.0/VOCData/images/73.jpg
+C:/Users/Win10/PycharmProjects/yolov5_wheel/yolov5-5.0/VOCData/images/78.jpg
+C:/Users/Win10/PycharmProjects/yolov5_wheel/yolov5-5.0/VOCData/images/80.jpg
+C:/Users/Win10/PycharmProjects/yolov5_wheel/yolov5-5.0/VOCData/images/88.jpg
